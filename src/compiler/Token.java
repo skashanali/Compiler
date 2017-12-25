@@ -11,5 +11,6 @@ public final class Token {
         this.CP = CP;
         this.VP = VP;
         this.Line_Number = Line_Number;
+        
     }
 }

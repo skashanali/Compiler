@@ -380,7 +380,7 @@ public class Compiler {
                 token.setValues("MUL_DIV", temp, lineNo);
                 break;
             case "%":
-                token.setValues("MODULO", temp, lineNo);
+                token.setValues("MUL_DIV", temp, lineNo);
                 break;
             case "=":
                 token.setValues("ASSIGNMENT_OPERATOR", temp, lineNo);
@@ -442,9 +442,11 @@ public class Compiler {
 
     public static void main(String[] args) {
         try {
-            FileReader fr = new FileReader("C:\\Users\\skash\\Desktop\\source.txt");
+//            FileReader fr = new FileReader("C:\\Users\\skash\\Desktop\\source.txt"); // for laptop
+            FileReader fr = new FileReader("C:\\Users\\Hammad Ali\\Desktop\\source.txt"); // for pc
             BufferedReader br = new BufferedReader(fr);
-            FileWriter fw = new FileWriter("C:\\Users\\skash\\Desktop\\tokens.txt");
+//            FileWriter fw = new FileWriter("C:\\Users\\skash\\Desktop\\tokens.txt"); // for laptop
+            FileWriter fw = new FileWriter("C:\\Users\\Hammad Ali\\Desktop\\tokens.txt"); // for pc
             BufferedWriter bw = new BufferedWriter(fw);
             String temp, code = "";
             int i = 0, j;
