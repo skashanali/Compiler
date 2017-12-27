@@ -274,11 +274,9 @@ public class Compiler {
             switch (temp) {
                 case "continous":
                     token.setValues("FOR", temp, lineNo);
-
                     break;
                 case "while":
                     token.setValues("WHILE", temp, lineNo);
-
                     break;
                 case "agar":
                     token.setValues("IF", temp, lineNo);
@@ -442,11 +440,11 @@ public class Compiler {
 
     public static void main(String[] args) {
         try {
-//            FileReader fr = new FileReader("C:\\Users\\skash\\Desktop\\source.txt"); // for laptop
-            FileReader fr = new FileReader("C:\\Users\\Hammad Ali\\Desktop\\source.txt"); // for pc
+            FileReader fr = new FileReader("C:\\Users\\skash\\Desktop\\source.txt"); // for laptop
+//            FileReader fr = new FileReader("C:\\Users\\Hammad Ali\\Desktop\\source.txt"); // for pc
             BufferedReader br = new BufferedReader(fr);
-//            FileWriter fw = new FileWriter("C:\\Users\\skash\\Desktop\\tokens.txt"); // for laptop
-            FileWriter fw = new FileWriter("C:\\Users\\Hammad Ali\\Desktop\\tokens.txt"); // for pc
+            FileWriter fw = new FileWriter("C:\\Users\\skash\\Desktop\\tokens.txt"); // for laptop
+//            FileWriter fw = new FileWriter("C:\\Users\\Hammad Ali\\Desktop\\tokens.txt"); // for pc
             BufferedWriter bw = new BufferedWriter(fw);
             String temp, code = "";
             int i = 0, j;
@@ -471,7 +469,7 @@ public class Compiler {
                 if (!"".equals(temp) && code.charAt(i) != '.') {
                     tokens.add(validate(temp, lineNo, code.charAt(i)));
                 } else if (code.charAt(i) == '.') {
-                    if (temp.chars().allMatch(Character::isDigit) || temp == "") {
+                    if (temp.chars().allMatch(Character::isDigit) || "".equals(temp)) {
                         temp += code.charAt(i);
                         i++;
                         while ((code.charAt(i) != '(' && code.charAt(i) != ')' && code.charAt(i) != '{' && code.charAt(i) != ','
