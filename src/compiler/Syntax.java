@@ -31,25 +31,25 @@ public class Syntax {
             System.out.println("Syntax parse successful.");
         } else {
             System.out.println(i);
-            System.out.println("Unsuccessful.");
+            System.out.println("Syntax parse unsuccessful.");
         }
     }
 
     public static boolean StartingPoint() {
-        return func_cfg();
-//        if (func_list()) {
-//            if (main_cfg()) {
-//                if (func_list()) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            } else {
-//                return false;
-//            }
-//        } else {
-//            return false;
-//        }
+//        return for_loop_cfg();
+        if (main_list()) {
+            if (main_cfg()) {
+                if (main_list()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public static boolean main_cfg() {
@@ -97,7 +97,7 @@ public class Syntax {
                 i++;
                 if ("{".equals(lexicalTokens.get(i).CP)) {
                     i++;
-                    if (struct_dec()) {
+                    if (struct_body()) {
                         if ("}".equals(lexicalTokens.get(i).CP)) {
                             i++;
                             if (";".equals(lexicalTokens.get(i).CP)) {
@@ -123,9 +123,9 @@ public class Syntax {
         }
     }
 
-    public static boolean struct_dec() {
+    public static boolean struct_body() {
         if (identifier()) {
-            if (struct_dec_list()) {
+            if (struct_body_list()) {
                 return true;
             } else {
                 return false;
@@ -135,12 +135,12 @@ public class Syntax {
         }
     }
 
-    public static boolean struct_dec_list() {
+    public static boolean struct_body_list() {
         if (";".equals(lexicalTokens.get(i).CP)) {
             i++;
             if ("}".equals(lexicalTokens.get(i).CP)) {
                 return true;
-            } else if (struct_dec()) {
+            } else if (struct_body()) {
                 return true;
             } else {
                 return false;
@@ -149,7 +149,7 @@ public class Syntax {
         } else if (",".equals(lexicalTokens.get(i).CP)) {
             i++;
             if (identifier()) {
-                if (struct_dec_list()) {
+                if (struct_body_list()) {
                     return true;
                 } else {
                     return false;
@@ -162,9 +162,9 @@ public class Syntax {
         }
     }
 
-    public static boolean func_list() {
-        if (func_cfg() || struct_cfg()) {
-            if (func_list()) {
+    public static boolean main_list() {
+        if (func_cfg() || struct_cfg() || dec_cfg()) {
+            if (main_list()) {
                 return true;
             } else {
                 return true;
@@ -221,13 +221,13 @@ public class Syntax {
                 if (for_init()) {
                     if (";".equals(lexicalTokens.get(i).CP)) {
                         i++;
-                        if (expression()) {
+                        if (expression_cfg()) {
                             if (";".equals(lexicalTokens.get(i).CP)) {
                                 i++;
                                 if (inc_dec()) {
                                     if (")".equals(lexicalTokens.get(i).CP)) {
                                         i++;
-                                        if (body_if_loops()) {
+                                        if (body_loops()) {
                                             return true;
                                         } else {
                                             return false;
@@ -308,11 +308,10 @@ public class Syntax {
     }
 
     public static boolean condition() {
-        if (expression()) {
+        if (expression_cfg()) {
             if ("RELATIONAL_OPERATOR".equals(lexicalTokens.get(i).CP)) {
                 i++;
-                if (expression()) {
-                    System.out.println(lexicalTokens.get(i).CP);
+                if (expression_cfg()) {
                     return true;
                 } else {
                     return false;
@@ -330,10 +329,10 @@ public class Syntax {
             i++;
             if ("(".equals(lexicalTokens.get(i).CP)) {
                 i++;
-                if (expression()) {
+                if (expression_cfg()) {
                     if (")".equals(lexicalTokens.get(i).CP)) {
                         i++;
-                        if (body_if_loops()) {
+                        if (body_loops()) {
                             return true;
                         } else {
                             return false;
@@ -352,7 +351,7 @@ public class Syntax {
         }
     }
 
-    public static boolean body_if_loops() {
+    public static boolean body_loops() {
         if (single_statement()) {
             return true;
         } else if (";".equals(lexicalTokens.get(i).CP)) {
@@ -384,9 +383,25 @@ public class Syntax {
     }
 
     public static boolean single_statement() {
-        if (dec_with_init_cfg() || expression() || for_loop_cfg() || while_loop_cfg() || if_else_cfg() || dec_without_init_cfg()) {
+        
+        if (for_loop_cfg() || while_loop_cfg() || if_else_cfg()) {
             return true;
-        } else {
+        }  else if (";".equals(lexicalTokens.get(i + 1).CP) || ",".equals(lexicalTokens.get(i + 1).CP) || "ASSIGNMENT_OPERATOR".equals(lexicalTokens.get(i + 1).CP)) {
+            if (dec_cfg()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        else if (expression_cfg()) {
+            if (";".equals(lexicalTokens.get(i).CP)) {
+                i++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+        else {
             return false;
         }
     }
@@ -418,19 +433,19 @@ public class Syntax {
             return true;
         }
     }
+
 //    public static boolean array(){
 //
 //    }
-
     public static boolean if_else_cfg() {
         if ("IF".equals(lexicalTokens.get(i).CP)) {
             i++;
             if ("(".equals(lexicalTokens.get(i).CP)) {
                 i++;
-                if (expression()) {
+                if (expression_cfg()) {
                     if (")".equals(lexicalTokens.get(i).CP)) {
                         i++;
-                        if (body_if_loops()) {
+                        if (body_loops()) {
                             if (else_if()) {
                                 if (and_else()) {
                                     return true;
@@ -462,10 +477,10 @@ public class Syntax {
             i++;
             if ("(".equals(lexicalTokens.get(i).CP)) {
                 i++;
-                if (expression()) {
+                if (expression_cfg()) {
                     if (")".equals(lexicalTokens.get(i).CP)) {
                         i++;
-                        if (body_if_loops()) {
+                        if (body_loops()) {
                             if (else_if()) {
                                 return true;
                             } else {
@@ -491,7 +506,7 @@ public class Syntax {
     public static boolean and_else() {
         if ("ELSE".equals(lexicalTokens.get(i).CP)) {
             i++;
-            if (body_if_loops()) {
+            if (body_loops()) {
                 return true;
             } else {
                 return false;
@@ -508,12 +523,12 @@ public class Syntax {
                 if (func_params()) {
                     if (")".equals(lexicalTokens.get(i).CP)) {
                         i++;
-                        if (";".equals(lexicalTokens.get(i).CP)) {
-                            i++;
+//                        if (";".equals(lexicalTokens.get(i).CP)) {
+//                            i++;
                             return true;
-                        } else {
-                            return false;
-                        }
+//                        } else {
+//                            return false;
+//                        }
                     } else {
                         return false;
                     }
@@ -586,10 +601,45 @@ public class Syntax {
         }
     }
 
-    public static boolean dec_with_init_cfg() {
+    public static boolean dec_cfg() {
         if (identifier()) {
-            if (dec_init()) {
-                if (dec_list_with_init()) {
+//            if (dec_init()) {
+            if (dec_list()) {
+                return true;
+            } else {
+                return false;
+            }
+//            } else {
+//                return false;
+//            }
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean dec_list() {
+        if (";".equals(lexicalTokens.get(i).CP)) {
+            i++;
+            return true;
+        } else if (",".equals(lexicalTokens.get(i).CP)) {
+            i++;
+            if (identifier()) {
+//                if (dec_init()) {
+                if (dec_list()) {
+                    return true;
+                } else {
+                    return false;
+                }
+//                } else {
+//                    return false;
+//                }
+            } else {
+                return false;
+            }
+        } else if ("ASSIGNMENT_OPERATOR".equals(lexicalTokens.get(i).CP)) {
+            i++;
+            if (expression_cfg()) {
+                if (dec_list()) {
                     return true;
                 } else {
                     return false;
@@ -602,89 +652,62 @@ public class Syntax {
         }
     }
 
-    public static boolean dec_list_with_init() {
-        if (";".equals(lexicalTokens.get(i).CP)) {
-            i++;
-            return true;
-        } else if (",".equals(lexicalTokens.get(i).CP)) {
-            i++;
-            if (identifier()) {
-                if (dec_init()) {
-                    if (dec_list_with_init()) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean dec_init() {
-        if ("ASSIGNMENT_OPERATOR".equals(lexicalTokens.get(i).CP)) {
-            i++;
-            if (dec_init2()) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-    }
-
-    public static boolean dec_init2() {
-        if (identifier()) {
-            if (dec_init()) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (constants()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    public static boolean dec_without_init_cfg() {
-        if (identifier()) {
-            if (list_without_init()) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-    
-    public static boolean list_without_init() {
-        if (";".equals(lexicalTokens.get(i).CP)) {
-            i++;
-            return true;
-        } else if (",".equals(lexicalTokens.get(i).CP)) {
-            i++;
-            if (identifier()) {
-                if (list_without_init()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
+//    public static boolean dec_init() {
+//        if ("ASSIGNMENT_OPERATOR".equals(lexicalTokens.get(i).CP)) {
+//            i++;
+//            if (dec_init2()) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } else {
+//            return true;
+//        }
+//    }
+//    public static boolean dec_init2() {
+//        if (identifier()) {
+//            if (dec_init()) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } else if (constants()) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//    public static boolean dec_without_init_cfg() {
+//        if (identifier()) {
+//            if (list_without_init()) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    public static boolean list_without_init() {
+//        if (";".equals(lexicalTokens.get(i).CP)) {
+//            i++;
+//            return true;
+//        } else if (",".equals(lexicalTokens.get(i).CP)) {
+//            i++;
+//            if (identifier()) {
+//                if (list_without_init()) {
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+//            } else {
+//                return false;
+//            }
+//        } else {
+//            return false;
+//        }
+//    }
     public static boolean constants() {
         if ("INTEGER_CONSTANT".equals(lexicalTokens.get(i).CP) || "CHARACTER_CONSTANT".equals(lexicalTokens.get(i).CP)
                 || "FLOAT_CONSTANT".equals(lexicalTokens.get(i).CP) || "STRING_CONSTANT".equals(lexicalTokens.get(i).CP)
@@ -726,7 +749,7 @@ public class Syntax {
         }
     }
 
-    public static boolean expression() {
+    public static boolean expression_cfg() {
         if (or_expression()) {
             return true;
         } else {
@@ -881,6 +904,7 @@ public class Syntax {
 
     public static boolean final_expression() {
         if (identifier()) {
+
             if ("INC_DEC".equals(lexicalTokens.get(i).CP)) {
                 i++;
                 return true;
@@ -891,7 +915,7 @@ public class Syntax {
             return true;
         } else if ("(".equals(lexicalTokens.get(i).CP)) {
             i++;
-            if (expression()) {
+            if (expression_cfg()) {
                 if (")".equals(lexicalTokens.get(i).CP)) {
                     i++;
                     return true;
@@ -910,7 +934,7 @@ public class Syntax {
             }
         } else if ("UNARY_OPERATOR".equals(lexicalTokens.get(i).CP)) {
             i++;
-            if (expression()) {
+            if (expression_cfg()) {
                 return true;
             } else {
                 return false;
